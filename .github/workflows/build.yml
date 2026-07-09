@@ -2,40 +2,14 @@ name: APK Yigish Bot
 
 on:
   push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install Dependencies
+    - uses: actions/checkout@v3
+    - name: Run Buildozer
       run: |
-        sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake libgdbm-dev libsqlite3-dev tk-dev libbzip2-dev libffi-dev liblzma-dev
         pip install --user --upgrade buildozer build cython virtualenv
-
-    - name: Accept Android Licenses
-      run: |
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
-        yes | sdkmanager --licenses || true
-
-    - name: Build APK with Buildozer
-      run: |
-        buildozer android debug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: Moliyachi-APK
-        path: bin/*.apk
+        yes | buildozer android debug || true
